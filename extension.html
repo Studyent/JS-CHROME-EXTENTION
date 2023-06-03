@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Shhhut</title>
+<meta charset="utf-8">
+<meta name="viewport" content="device-width,initial-scale = 1.0">
+<meta name="description" content="This extension helps you blurring images">
+<!--<link rel="stylesheet" href="ext.css"> -->
+<style>
+
+html{
+    width: 100vw;
+    height: 100vh;
+}
+
+#cnv{
+    border: 1px solid black;
+    
+}
+
+#tittle{
+
+    text-align: center;
+
+}
+#main{
+    border: 2px;
+}
+#main button{
+border-radius: 5px;
+border: 3px solid gray;
+margin: 200px;
+display: block;
+padding: 20px;
+
+}
+#fichier{
+    margin-left: 200px;
+}
+
+#cercle {
+  background-color: transparent;
+  border:1px solid black;    
+  height:30px;
+  width:30px;
+  border-radius:50%;
+  position: absolute;
+
+}
+
+</style>
+</head>
+<body>
+
+
+<div id="main">
+<h1 id="tittle">Upload your file</h1>
+<input id ="fichier" type="file" onchange="loadimage()">
+<canvas id="cnv"></canvas>
+<button id="dessin" type="button" value="flouter"></button>
+<button id="valide" type="button" value="valide"></button>
+
+</div>
+<div id="cercle"></div>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
+  
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+
+<script type="text/javascript">
+
+document.getElementById('dessin').addEventListener('click',flouter);
+document.getElementById('valide').addEventListener('click',valider);
+let canvas = document.getElementById('cnv');
+
+function flouter() {
+    document.body.style.cursor = "none";
+    
+    if (!document.getElementById("cercle")) {
+    document.body.appendChild(document.createElement("div")).id="cercle"
+}
+
+
+    $(document).ready(function() {
+  $(document).on('mousemove', function(e) {
+    $('#cercle').css({
+      left: e.pageX,
+      top: e.pageY
+    });
+  })
+});
+
+
+
+
+}
+
+
+
+
+function valider(){
+
+document.body.style.cursor = "default";
+$(document).off("mousemove");
+$("#cercle").remove();
+}
+
+
+
+
+function verif(fich){
+
+let format = ["image/jpeg","image/jpg","image/png"]; 
+
+for(let i = 0;i<format.length;i++){
+    if(fich.type == format[i]){
+        return true;
+    }
+    
+}
+return false;
+}
+
+function loadimage(){
+
+let fc = document.getElementById('fichier');
+console.log(fc.files);
+
+let fichier = fc.files[0];
+console.log("File name:" + fichier.name);
+let date = new Date(fichier.lastModified);
+console.log("Last modified:" + date);
+
+
+  if(verif(fichier) == true){
+    
+    if(fc.files.length == 0){
+    throw "file missing";
+  }else{
+    try{
+   
+    let image = new Image();
+    let reader = new FileReader();
+    reader.readAsDataURL(fichier);
+    reader.onloadend = function() {
+        image.src = reader.result;
+        
+        image.onload = function(){
+            const canvas = document.getElementById('cnv');
+            canvas.height = image.naturalHeight;
+            canvas.width = image.naturalWidth;
+            var dessing = canvas.getContext('2d');
+            dessing.clearRect(0,0,canvas.width,canvas.height);
+            dessing.drawImage(image,0,0);
+            
+            
+        }
+
+    }
+
+  }
+  catch(error){
+    console.log(error);
+  }
+}
+
+
+
+
+}
+}
+
+
+
+</script>
+
+
+
+
+
+
+
+</body>
+</html>
